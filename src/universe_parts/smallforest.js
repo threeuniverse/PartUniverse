@@ -1,5 +1,5 @@
 
-defineThreeUniverse(function (THREE) {
+defineThreeUniverse(function (THREE,options) {
 
     return new Promise(function (resolve, reject) {
 
