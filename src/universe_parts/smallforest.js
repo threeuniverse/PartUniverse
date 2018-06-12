@@ -35,13 +35,14 @@ defineThreeUniverse(function (THREE) {
 
         };
         var onLoadMtl = function (materials) {
+            
             // objLoader.setModelName(modelName);
             objLoader.setMaterials(materials);
             objLoader.setLogging(true, true);
-            objLoader.load('resource/forest/Oak_Tree.obj', callbackOnLoad, null, null, null, false);
+            objLoader.load(options.baseUrl+'resource/forest/Oak_Tree.obj', callbackOnLoad, null, null, null, false);
 
 
         };
-        objLoader.loadMtl('resource/forest/Oak_Tree.mtl', null, onLoadMtl);
+        objLoader.loadMtl(options.baseUrl+'resource/forest/Oak_Tree.mtl', null, onLoadMtl);
     });
 });
