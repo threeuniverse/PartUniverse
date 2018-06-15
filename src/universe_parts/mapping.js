@@ -1,6 +1,6 @@
 defineThreeUniverse(function () {
 
-    let local_part = "https://shakthi.github.io/ThreeJSUniverse/";
+    let local_part = "https://shakthi.github.io/PartUniverse/";
 
     let maping = [
         {
