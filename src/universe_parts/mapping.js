@@ -43,11 +43,18 @@ defineThreeUniverse(function () {
             //credits: "https://threejs.org/examples/#webgl_animation_cloth"
         },
         {
-            position: { x: 0, z: -2700, y: -100 },
+            position: { x: 0, z: -2700, y: 0 },
             radius: 1000,
             description: "Futeristic ground",
             url: "https://shakthi.github.io/ThreeJSUniverse/src/universe_parts/futureGround.js",
+        },
+        {
+            position: { x: 542, y: 0, z: -582 },
+            radius: 1000,
+            description: "Simple cube ground",
+            url: "https://ashwithags.github.io/ThreeJSUniverse/src/universe_parts/simpleCube.js",
         }
+
 
 
     ];

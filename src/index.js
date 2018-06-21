@@ -1,116 +1,102 @@
 
 import * as THREE from 'three';
 import { datGUI } from './dat';
-import { initVisibilityDesider } from './visibiltyDesider';
-import { loadUniverseAt, unLoadUniverseAt, updateloadedParts } from './objectManager'
+import { initVisibilityDesider,timeRenderEnd,timeRenderBegin } from './visibiltyDesider';
+import { loadUniverseAt, unLoadUniverseAt, updateloadedParts, initMaping } from './objectManager'
 import { initController, updateController } from './controller'
+import instructionPanel  from './instructionPanel'
 import setLocationHash from 'set-location-hash';
 
 
 
 
 var camera, scene, renderer, controls;
-var rendererStats;
 
 
-var objects = [];
-
-var raycaster;
-
-var blocker = document.getElementById('blocker');
-var instructions = document.getElementById('instructions');
-
-// http://www.html5rocks.com/en/tutorials/pointerlock/intro/
-
-var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
-
-if (havePointerLock) {
-
-    var element = document.body;
-
-    var pointerlockchange = function (event) {
-
-        if (document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element) {
 
 
-            controls.enabled = true;
 
-            blocker.style.display = 'none';
 
+initMaping().then(lmap => {
+    let initialPosition = new THREE.Vector3();
+    let offset = new THREE.Vector3(0, 100, 0);
+
+    let urlHashPosition = getHashObject();
+
+    if (urlHashPosition) {
+        initialPosition.set(offset.x + urlHashPosition.x, offset.y + urlHashPosition.y, offset.z + urlHashPosition.z);
+    } else {
+
+        let lastCameraPosition = localStorage.getItem("lastCameraPosition");
+        if (lastCameraPosition && lastCameraPosition !== "undefined") {
+            let obj = JSON.parse(lastCameraPosition);
+            initialPosition.set(offset.x + obj.x, offset.y + obj.y, offset.z + obj.z);
         } else {
+            let local_position = lmap.local_position;
+            ['x', 'y', 'z'].forEach(key => {
+                if (local_position[key])
+                    local_position[key] = Number(local_position[key]);
+                else
+                    local_position[key] = 0;
 
-            controls.enabled = false;
+            });
 
-            blocker.style.display = 'block';
+            if (local_position) {
+                initialPosition.set(offset.x + local_position.x, offset.y + local_position.y, offset.z + local_position.z);
+            }
 
-            instructions.style.display = '';
+
 
         }
 
-    };
-
-
-
-    var pointerlockerror = function (event) {
-
-        instructions.style.display = '';
-
-    };
-
-    // Hook pointer lock state change events
-    document.addEventListener('pointerlockchange', pointerlockchange, false);
-    document.addEventListener('mozpointerlockchange', pointerlockchange, false);
-    document.addEventListener('webkitpointerlockchange', pointerlockchange, false);
-
-    document.addEventListener('pointerlockerror', pointerlockerror, false);
-    document.addEventListener('mozpointerlockerror', pointerlockerror, false);
-    document.addEventListener('webkitpointerlockerror', pointerlockerror, false);
-
-
-    function firsttlock() {
-        element.requestPointerLock();
-        element.removeEventListener('click', firsttlock);
     }
-
-    element.addEventListener('click', firsttlock);
-
-
-    instructions.addEventListener('click', function (event) {
-
-        instructions.style.display = 'none';
-
-        // Ask the browser to lock the pointer
-        element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
-        element.requestPointerLock();
-
-    }, false);
-
-} else {
-
-    instructions.innerHTML = 'Your browser doesn\'t seem to support Pointer Lock API';
-
-}
-
-var controlsEnabled = false;
+    init(initialPosition);
+    animate();
 
 
+})
 
-init();
-animate();
 var isSetNeedToDisplay = true;
 function setNeedToDisplay() {
     isSetNeedToDisplay = true;
 }
 
-blocker.style.display = 'none';
-controls.enabled = true;
+var firstFrame = true;
+
+//blocker.style.display = 'none';
 
 
-function init() {
+function getHashObject() {
+    let hashParam = window.location.hash.substr(1).split('&');
+    let hashParamObject = {};
+    hashParam.forEach(item => {
+        let splitted = item.split(':')
+        hashParamObject[splitted[0]] = splitted[1];
+    })
+
+    if (hashParam.length <= 1) {
+        return null;
+    }
+
+    function setVal(pr) {
+        if (hashParamObject[pr])
+            hashParamObject[pr] = Number(hashParamObject[pr]);
+        else
+            hashParamObject[pr] = 0;
+    }
+
+    setVal('x');
+    setVal('y');
+    setVal('z');
+    ;
+
+    return hashParamObject;
+}
+
+
+function init(position) {
 
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
-
-    camera.position.set(0, 100, 0);
 
 
 
@@ -139,30 +125,17 @@ function init() {
     // scene.add(light);
     controls = initController(camera)
     scene.add(controls.getObject());
-
-    let lastCameraPosition = localStorage.getItem("lastCameraPosition");
-    if (lastCameraPosition && lastCameraPosition !== "undefined") {
-        let obj = JSON.parse(lastCameraPosition);
-        controls.getObject().position.set(obj.x, obj.y, obj.z);
-    }
-
+    camera.position.y = 100;
+    controls.getObject().translateX(position.x);
+    controls.getObject().translateZ(position.z);
+    instructionPanel.init(controls);
     // let lastCameraRotation =localStorage.getItem("lastCameraRotation");
     // if (lastCameraRotation) {
     //     let obj = JSON.parse(lastCameraRotation);
     //     controls.getObject().rotation.set(obj._x,obj._y,obj._z);
     // }
 
-    let hashParam = window.location.hash.substr(1).split('&');
-    let hashParamObject = {};
-    hashParam.forEach(item => {
-        let splitted = item.split(':')
-        hashParamObject[splitted[0]] = splitted[1];
-    })
 
-    if (hashParamObject.x) {
-        controls.getObject().position.set(Number(hashParamObject.x),
-            0, Number(hashParamObject.z));
-    }
     var light = new THREE.AmbientLight(0x404040); // soft white light
     scene.add(light);
 
@@ -179,6 +152,7 @@ function init() {
     //
 
     window.addEventListener('resize', onWindowResize, false);
+    //controls.enabled = true;
 
 }
 
@@ -186,34 +160,43 @@ function onWindowResize() {
 
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
+    setNeedToDisplay();
 
     renderer.setSize(window.innerWidth, window.innerHeight);
 
 }
 
 function animate() {
-
     requestAnimationFrame(animate);
-    if (isSetNeedToDisplay) {
-        renderer.render(scene, camera);
-        isSetNeedToDisplay = false;
-        updateloadedParts(controls.getObject().position);
+    var timeBegan = false;
+
+    if(isSetNeedToDisplay ){
+        timeRenderBegin();
+        timeBegan =true;
     }
 
-    if (controls.enabled === true) {
 
+    if (isSetNeedToDisplay) {
+
+        renderer.render(scene, camera);
         
+        isSetNeedToDisplay = false;
+        updateloadedParts(controls.getObject().position);
 
+    }
+
+    if (controls.enabled === true || firstFrame) {
         if (updateController(false)) {
             updateUniverseAt(controls.getObject().position);
             setNeedToDisplay();
-
         }
+
+        firstFrame = false;
 
     }
 
-
-
+    if(timeBegan)
+        timeRenderEnd();
 }
 
 
@@ -221,22 +204,31 @@ function animate() {
 
 function updateUniverseAt(position) {
     if (!updateUniverseAt.frameCount) {
-        updateUniverseAt.count = 0;
+        updateUniverseAt.frameCount = 0;
+    }
+    if (updateUniverseAt.frameCount == 0) {
+        loadUniverseAt(position, camera.far, scene, setNeedToDisplay);
+        unLoadUniverseAt(position, camera.far, scene, setNeedToDisplay);
+
+    }
+
+
+
+
+    if (updateUniverseAt.frameCount == 59) {
+        localStorage.setItem("lastCameraPosition", JSON.stringify(position));
+        localStorage.setItem("lastCameraRotation", JSON.stringify(controls.getObject().rotation));
+
+        setLocationHash(`x:${controls.getObject().position.x.toFixed(0)}&z:${controls.getObject().position.z.toFixed(0)}`,
+            { replace: true });
     }
 
 
     if (updateUniverseAt.frameCount < 60) {
         updateUniverseAt.frameCount++;
     } else {
+
         updateUniverseAt.frameCount = 0;
-        loadUniverseAt(position, camera.far, scene, setNeedToDisplay);
-        unLoadUniverseAt(position, camera.far, scene, setNeedToDisplay);
-        localStorage.setItem("lastCameraPosition", JSON.stringify(position.position));
-        localStorage.setItem("lastCameraRotation", JSON.stringify(controls.getObject().rotation));
-
-        setLocationHash(`x:${controls.getObject().position.x.toFixed(0)}&z:${controls.getObject().position.z.toFixed(0)}`, { replace: true });
-
-
     }
 
 
