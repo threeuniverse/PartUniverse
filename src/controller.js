@@ -14,11 +14,17 @@ var direction = new THREE.Vector3();
 
 
 var controls;
-export function initController(camera, setNeedsToRender) {
+export function enabled() {
+    return controls.enabled;
+}
+
+export function init(camera, position) {
 
     controls = new PointerLockControls(camera);
-
+    controls.getObject().translateX(position.x);
+    controls.getObject().translateZ(position.z);
     var onKeyDown = function (event) {
+
 
         switch (event.keyCode) {
 
@@ -30,9 +36,13 @@ export function initController(camera, setNeedsToRender) {
             case 37: // left
             case 65: // a
                 moveLeft = true; break;
-            
+
             case 66: // b
-            nitroBoost = true; break;
+            case 67: // c
+            case 86: // v
+            case 78: // v
+            case 77: // v
+                nitroBoost = true; break;
 
             case 40: // down
             case 83: // s
@@ -52,6 +62,7 @@ export function initController(camera, setNeedsToRender) {
         }
 
     };
+
 
     var onKeyUp = function (event) {
 
@@ -77,8 +88,13 @@ export function initController(camera, setNeedsToRender) {
                 moveRight = false;
                 break;
 
-            case 66: // b
-            nitroBoost = false; break;
+           
+                case 66: // b
+                case 67: // c
+                case 86: // v
+                case 78: // v
+                case 77: // v
+                nitroBoost = false; break;
         }
 
     };
@@ -94,7 +110,10 @@ export function initController(camera, setNeedsToRender) {
 let prevPosition = new THREE.Vector3();
 let prevRocation = new THREE.Vector3();
 
-export function updateController(onObject) {
+export function update(onObject) {
+
+    if(!controls.enabled)
+        return;
 
     var time = performance.now();
     var delta = (time - prevTime) / 1000;
@@ -117,12 +136,7 @@ export function updateController(onObject) {
     if (moveForward || moveBackward) velocity.z -= direction.z * mult * delta;
     if (moveLeft || moveRight) velocity.x -= direction.x * mult * delta;
 
-    if (onObject === true) {
-
-        velocity.y = Math.max(0, velocity.y);
-        canJump = true;
-
-    }
+  
     controls.getObject().translateX(velocity.x * delta);
     controls.getObject().translateY(velocity.y * delta);
     controls.getObject().translateZ(velocity.z * delta);
@@ -149,8 +163,8 @@ export function updateController(onObject) {
 
     if (distace > Number.EPSILON || Math.abs(rotation.x) > Number.EPSILON
         || Math.abs(rotation.y) > Number.EPSILON
-        || Math.abs(rotation.z) > Number.EPSILON) {  
-        
+        || Math.abs(rotation.z) > Number.EPSILON) {
+
         isUpdate = true;
     }
 

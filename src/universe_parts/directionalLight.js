@@ -1,7 +1,6 @@
 
 defineThreeUniverse(function (THREE,options) {
 
-    return new Promise(function (resolve, reject) {
 
       
     //Create a DirectionalLight and turn on shadows for the light
@@ -14,8 +13,8 @@ defineThreeUniverse(function (THREE,options) {
     light.shadow.mapSize.height = 512; // default
     light.shadow.camera.near = 0.5;    // default
     light.shadow.camera.far = 500;     // default
-    light.shadow.camera.left = light.shadow.camera.bottom = -800;
-    light.shadow.camera.top = light.shadow.camera.right =800;
+    light.shadow.camera.left = light.shadow.camera.bottom = -900;
+    light.shadow.camera.top = light.shadow.camera.right =900;
     light.add(light.target);
     light.target.position.set(-50,-200,0);
 
@@ -25,7 +24,9 @@ defineThreeUniverse(function (THREE,options) {
         })
     }    
 
-    resolve(light);
+    // var helper = new THREE.CameraHelper( light.shadow.camera );
+    // light.add( helper );
 
-    });
+    return light;
+
 });
