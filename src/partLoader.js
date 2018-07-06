@@ -1,5 +1,6 @@
 
 import loadScript from "simple-load-script";
+import { resolve } from "path";
 
 
 let num = 0;
@@ -31,13 +32,15 @@ export function loadnExecute(url, initializerName, callback) {
 
     }
 
-    loadScript(url, {
-        removeScript: true, attrs: {
-            "data-scriptid": `${num}`
-        }
-    }).then(element => {        
-       //console.log(`Loaded ${url}`);
+    return new Promise((resolve,reject)=>{
+        loadScript(url, {
+            removeScript: true, attrs: {
+                "data-scriptid": `${num}`
+            }
+        }).then(resolve).catch(reject);
+
     });
+    
 
 
 
