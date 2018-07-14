@@ -303,7 +303,6 @@ THREE.GPUParticleContainer = function ( maxParticles, particleSystem ) {
 	var color = new THREE.Color();
 
 	this.spawnParticle = function ( options ) {
-		debugger;
 		var positionStartAttribute = this.particleShaderGeo.getAttribute( 'positionStart' );
 		var startTimeAttribute = this.particleShaderGeo.getAttribute( 'startTime' );
 		var velocityAttribute = this.particleShaderGeo.getAttribute( 'velocity' );
@@ -413,7 +412,6 @@ THREE.GPUParticleContainer = function ( maxParticles, particleSystem ) {
 
 	this.update = function ( time ) {
 
-		debugger;
 		this.time = time;
 		this.particleShaderMat.uniforms.uTime.value = time;
 

@@ -53,7 +53,7 @@ defineThreeUniverse(function (THREE, options) {
             if (mesh.position.y<50&&  spawnParticle) {
                 spawnParticle();
             }
-            updateParticle();
+            updateParticle && updateParticle();
         });
     }
 
