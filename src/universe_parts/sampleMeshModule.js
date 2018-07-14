@@ -2,6 +2,24 @@
 
 defineThreeUniverse(function (THREE, options) {
 
+    function loadGPUParticlesSystem() {
+        return new Promise(resolve => {
+            if (THREE.GPUParticleSystem)
+                resolve(THREE.GPUParticleSystem);
+            else {
+                if (!window.THREE) {
+                    window.THREE = THREE;
+                }
+                THREE.loadnExecute(options.baseUrl + "src/extern/GPUParticleSystem.js").then(() => {
+                    resolve(THREE.GPUParticleSystem);
+                });
+
+            }
+
+
+        })
+
+    }
 
     let root = new THREE.Object3D();
 
@@ -44,13 +62,13 @@ defineThreeUniverse(function (THREE, options) {
     var clock = new THREE.Clock();
     root.add(mesh);
 
-    let spawnParticle=null;
-    let updateParticle=null;
+    let spawnParticle = null;
+    let updateParticle = null;
 
     if (options.requestAnimationFrame) {
         options.requestAnimationFrame(function () {
             mesh.position.y = Math.sin(clock.getElapsedTime()) * 100 + 100;
-            if (mesh.position.y<50&&  spawnParticle) {
+            if (mesh.position.y < 50 && spawnParticle) {
                 spawnParticle();
             }
             updateParticle && updateParticle();
@@ -61,48 +79,44 @@ defineThreeUniverse(function (THREE, options) {
 
 
 
-    
+    loadGPUParticlesSystem().then(GPUParticleSystem => {
 
-    if (!THREE.GPUParticleSystem) {
-        if (!window.THREE) {
-            window.THREE = THREE;
-        }
-        THREE.loadnExecute(options.baseUrl +"src/extern/GPUParticleSystem.js").then(() => {
-        
-            let particleOptions = {
-                position: new THREE.Vector3(0,-20,0),
-                positionRandomness: 0,
-                velocity: new THREE.Vector3(0,100,0),
-                velocityRandomness: 10,
-                color: 0xff0000,
-                colorRandomness: 0.5,
-                turbulence: .5,
-                lifetime: 20,
-                size: 25,
-                sizeRandomness: 1,
-                
-            };
-            var textureLoader = new THREE.TextureLoader();
+        let particleOptions = {
+            position: new THREE.Vector3(0, -20, 0),
+            positionRandomness: 0,
+            velocity: new THREE.Vector3(0, 100, 0),
+            velocityRandomness: 10,
+            color: 0xff0000,
+            colorRandomness: 0.5,
+            turbulence: .5,
+            lifetime: 20,
+            size: 25,
+            sizeRandomness: 1,
 
-            let particleSystem = new THREE.GPUParticleSystem({
-                maxParticles: 250000,
-                particleNoiseTex:textureLoader.load(options.baseUrl +"resource/texture/perlin-512.png"),
-                particleSpriteTex:textureLoader.load(options.baseUrl +"resource/texture/particle2.png")
-            });
-            root.add(particleSystem);
-            let clock = new THREE.Clock();
-            spawnParticle = function () {
-                particleSystem.spawnParticle( particleOptions );
-            }
+        };
+        var textureLoader = new THREE.TextureLoader();
 
-            updateParticle = function () {
-                particleSystem.update(clock.getElapsedTime()*10);
-
-            }
-            
-
+        let particleSystem = new THREE.GPUParticleSystem({
+            maxParticles: 250000,
+            particleNoiseTex: textureLoader.load(options.baseUrl + "resource/texture/perlin-512.png"),
+            particleSpriteTex: textureLoader.load(options.baseUrl + "resource/texture/particle2.png")
         });
-    }
+        root.add(particleSystem);
+        let clock = new THREE.Clock();
+        spawnParticle = function () {
+            particleSystem.spawnParticle(particleOptions);
+        }
+
+        updateParticle = function () {
+            particleSystem.update(clock.getElapsedTime() * 10);
+
+        }
+
+
+
+    });
+
+
 
 
 
@@ -110,4 +124,3 @@ defineThreeUniverse(function (THREE, options) {
     return root;
 });
 
-//Test commit
