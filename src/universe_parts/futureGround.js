@@ -1,4 +1,4 @@
-defineThreeUniverse(function (THREE) {
+defineThreeUniverse(function (THREE,options) {
 
     // floor
 
@@ -34,10 +34,19 @@ defineThreeUniverse(function (THREE) {
 
     }
 
+    var loader = new THREE.TextureLoader();
+    
+
+    var normalMap = loader.load(options.baseUrl+'resource/Leather_004_NRM.png');
+    normalMap.wrapS = normalMap.wrapT = THREE.RepeatWrapping;
+    normalMap.repeat.set(25, 25);
+    
+    
+
     
     floorGeometry.addAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
 
-    var floorMaterial = new THREE.MeshStandardMaterial({ metalness:0.5,flatShading:true,vertexColors: THREE.VertexColors,shininess:20 });
+    var floorMaterial = new THREE.MeshStandardMaterial({ metalness:0.5,normalMap:normalMap,flatShading:true,vertexColors: THREE.VertexColors,shininess:20 });
 
     var floor = new THREE.Mesh(floorGeometry, floorMaterial);
     return floor;
