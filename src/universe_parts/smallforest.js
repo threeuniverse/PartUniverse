@@ -1,5 +1,5 @@
 
-defineThreeUniverse(function (THREE,options) {
+defineThreeUniverse(function (THREE,options,UNIVERSE) {
 
     return new Promise(function (resolve, reject) {
 
@@ -10,7 +10,7 @@ defineThreeUniverse(function (THREE,options) {
             // //scope._reportProgress({ detail: { text: '' } });
             // event.detail.loaderRootNode.rotateX(- 90 * THREE.Math.DEG2RAD);
 
-            let prg = THREE.seedrandom("Farest rendering start");
+            let prg = UNIVERSE.seedrandom("Farest rendering start");
             let obj = new THREE.Object3D();
             event.detail.loaderRootNode.scale.set(40, 40, 40);
             

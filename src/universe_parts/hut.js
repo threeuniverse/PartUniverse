@@ -1,5 +1,5 @@
 
-defineThreeUniverse(function (THREE, options) {
+defineThreeUniverse(function (THREE, options,UNIVERSE) {
 
     function loadMTLNObject(baseUrl, mtl, obj) {
         var objLoader = new THREE.OBJLoader2();
@@ -36,7 +36,7 @@ defineThreeUniverse(function (THREE, options) {
 
             })
 
-            let prg = THREE.seedrandom("Palm Distribution with hut");
+            let prg = UNIVERSE.seedrandom("Palm Distribution with hut");
 
             for (let index = 0; index < 10; index++) {
                 
