@@ -43,6 +43,11 @@ defineThreeUniverse(function (THREE, options, UNIVERSE) {
                 let clone = object.clone();
                 clone.rotateY(prg() * Math.PI * 2);
                 clone.position.set(prg() * 300 - 150 + 600, 0, prg() * 100 - 50);
+                
+                var caster = new options.LocalGroundRayCaster(clone.position.clone().add(new THREE.Vector3(0,100,0)));
+                caster.intersectObjectsOrWait().then((result)=>{
+                    clone.position.y=result[0].point.y;
+                })
                 rootObj.add(clone);
             }
 
@@ -60,13 +65,14 @@ defineThreeUniverse(function (THREE, options, UNIVERSE) {
                     var val = k.intersectObjectsOrWait();
                     val.then((result) => {
 
-                        hut.position.y = result[0].point.y;
+                        hut.position.y = result[0].point.y-5;
                         
 
                     })
 
-                }else
-                    resolve(rootObj);
+                }
+                
+                resolve(rootObj);
             });
 
         });
