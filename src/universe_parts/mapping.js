@@ -13,11 +13,11 @@ defineThreeUniverse(function () {
         },
 
         {
-            position: { x: 1, z: 1 },
+            position: { x: 0, z: 0 },
             credits: "https://www.turbosquid.com/",
             url: "https://shakthi.github.io/PartUniverse/src/universe_parts/lonetree.js",
         },
-       /* {
+        {
             position: { x: 100, z: 100 },
             credits: "https://www.turbosquid.com/",
             url: "https://shakthi.github.io/PartUniverse/src/universe_parts/smallforest.js",
@@ -55,7 +55,7 @@ defineThreeUniverse(function () {
             url: "https://shakthi.github.io/PartUniverse/src/universe_parts/hut.js",
         },
 
-        */
+
 
     ];
 
