@@ -1,6 +1,6 @@
 
 
-defineThreeUniverse(function (THREE, options) {
+defineThreeUniverse(function (THREE,UNIVERSE, options) {
 
     function loadGPUParticlesSystem() {
         return new Promise(resolve => {

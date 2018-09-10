@@ -1,4 +1,4 @@
-defineThreeUniverse(function (THREE, options) {
+defineThreeUniverse(function (THREE,UNIVERSE,options) {
 
     return new Promise(function (resolve) {
 

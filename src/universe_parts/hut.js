@@ -1,5 +1,5 @@
 
-defineThreeUniverse(function (THREE, options, UNIVERSE) {
+defineThreeUniverse(function (THREE, UNIVERSE,options) {
 
     function loadMTLNObject(baseUrl, mtl, obj) {
         var objLoader = new THREE.OBJLoader2();
