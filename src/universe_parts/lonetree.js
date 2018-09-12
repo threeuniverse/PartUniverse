@@ -14,16 +14,16 @@ defineThreeUniverse(function (THREE,UNIVERSE,options) {
                     object.castShadow = true;
                 }
             })
+
+
+            options.GetGroundHitPoint(new THREE.Vector3(0,1000,0)).then(result=>{
+                console.log("tree",result[0].point.y)
+                event.detail.loaderRootNode.position.y = result[0].point.y;
+                resolve(event.detail.loaderRootNode);
+            })
             
-                var k = new options.LocalGroundRayCaster(new THREE.Vector3(0,100,0));
-                debugger;
-                var val= k.intersectObjectsOrWait();
-                val.then((result)=>{
-
-                    event.detail.loaderRootNode.position.y = result[0].point.y;
-                    resolve(event.detail.loaderRootNode);
-
-                })
+              
+                
                 
                 
                 
