@@ -25,13 +25,13 @@ defineThreeUniverse(function (THREE,UNIVERSE,options) {
                 
                 let clone=event.detail.loaderRootNode.clone();
                 clone.rotateY(prg()*Math.PI*2);
-                clone.position.set(prg()*1000-500,0,prg()*1000-500);
-
-                var caster = new options.LocalGroundRayCaster(clone.position.clone().add(new THREE.Vector3(0,100,0)));
-                caster.intersectObjectsOrWait().then((result)=>{
+                clone.position.set(prg()*1000-500,100,prg()*1000-500);
+                options.GetGroundHitPoint(clone.position).then(result=>{
                     clone.position.y=result[0].point.y;
                     obj.add(clone);
-                })
+                });
+
+              
                 
             }
 
