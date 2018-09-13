@@ -10,7 +10,7 @@ defineThreeUniverse(function (THREE,UNIVERSE, options) {
                 if (!window.THREE) {
                     window.THREE = THREE;
                 }
-                THREE.loadnExecute(options.baseUrl + "src/extern/GPUParticleSystem.js").then(() => {
+                UNIVERSE.loadnExecute(options.baseUrl + "src/extern/GPUParticleSystem.js").then(() => {
                     resolve(THREE.GPUParticleSystem);
                 });
 
