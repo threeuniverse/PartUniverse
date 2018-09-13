@@ -1,40 +1,19 @@
 
 defineThreeUniverse(function (THREE, UNIVERSE, options) {
 
-    function loadMTLNObject(baseUrl, mtl, obj) {
-        var objLoader = new THREE.OBJLoader2();
-
-        return new Promise((resolve, reject) => {
-            objLoader.loadMtl(baseUrl + mtl, null, function (materials) {
-
-                objLoader.setMaterials(materials);
-                objLoader.setLogging(false, false);
-                objLoader.load(baseUrl + obj, (event) => {
-                    resolve(event.detail.loaderRootNode);
-                }, null, null, null, false);
-
-            });
-        });
-
-    }
+  
 
     return new Promise(function (resolve, reject) {
         var rootObj = new THREE.Object3D();
 
-
-        var objectPromise2 = loadMTLNObject(options.baseUrl, 'resource/forest/Palm_Tree.mtl', 'resource/forest/Palm_Tree.obj');
+        var objectPromise2 = UNIVERSE.loadMTLNObject(options.baseUrl, 'resource/forest/Palm_Tree.mtl', 'resource/forest/Palm_Tree.obj');
         objectPromise2.then(object => {
 
 
 
             object.scale.set(30, 30, 30);
 
-            object.traverse(object => {
-                if (object.isMesh) {
-                    object.castShadow = true;
-                }
-
-            })
+            UNIVERSE.castShadow(object);
 
             let prg = UNIVERSE.seedrandom("Palm Distribution with hut");
 
@@ -53,8 +32,7 @@ defineThreeUniverse(function (THREE, UNIVERSE, options) {
                 rootObj.add(clone);
             }
 
-
-            loadMTLNObject(options.baseUrl, 'resource/hut/shack.obj.mtl', 'resource/hut/shack.obj').then(hut => {
+            options.loadMTLNObject( 'resource/hut/shack.obj').then(hut => {
                 rootObj.add(hut);
                 hut.scale.set(30, 30, 30);
                 hut.position.set(300, 0, 200);
