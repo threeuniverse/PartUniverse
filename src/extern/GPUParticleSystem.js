@@ -20,7 +20,7 @@ THREE.GPUParticleSystem = function ( options ) {
 	THREE.Object3D.apply( this, arguments );
 
 	options = options || {};
-
+	
 	// parse options and use defaults
 
 	this.PARTICLE_COUNT = options.maxParticles || 1000000;
@@ -235,6 +235,7 @@ THREE.GPUParticleSystem = function ( options ) {
 
 	this.update = function ( time ) {
 
+		
 		for ( var i = 0; i < this.PARTICLE_CONTAINERS; i ++ ) {
 
 			this.particleContainers[ i ].update( time );
@@ -302,7 +303,6 @@ THREE.GPUParticleContainer = function ( maxParticles, particleSystem ) {
 	var color = new THREE.Color();
 
 	this.spawnParticle = function ( options ) {
-
 		var positionStartAttribute = this.particleShaderGeo.getAttribute( 'positionStart' );
 		var startTimeAttribute = this.particleShaderGeo.getAttribute( 'startTime' );
 		var velocityAttribute = this.particleShaderGeo.getAttribute( 'velocity' );

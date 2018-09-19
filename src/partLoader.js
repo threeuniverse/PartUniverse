@@ -1,5 +1,6 @@
 
 import loadScript from "simple-load-script";
+import { resolve } from "path";
 
 
 let num = 0;

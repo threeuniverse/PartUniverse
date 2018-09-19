@@ -11,10 +11,11 @@ let panel = {
         var start_instruction = document.getElementById('start-instruction');
 
         if (md.mobile()) {
+
             control_instruction.innerHTML = "Pan = Move</br>Rotate = Look around";
-            start_instruction.innerHTML = "Tap to roam; fork to edit "
+            start_instruction.innerHTML = "Tap to roam; Fork to edit";
 
-
+            
             instructions.addEventListener('click', function (event) {
 
                 instructions.style.display = 'none';
@@ -38,17 +39,13 @@ let panel = {
 
                     if (document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element) {
 
-
                         controls.enabled = true;
-
                         blocker.style.display = 'none';
 
                     } else {
 
                         controls.enabled = false;
-
                         blocker.style.display = 'block';
-
                         instructions.style.display = '';
 
                     }

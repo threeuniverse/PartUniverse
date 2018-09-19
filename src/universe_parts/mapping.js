@@ -1,13 +1,13 @@
 defineThreeUniverse(function () {
 
-    let local_part = "https://threeuniverse.org/";
+    let local_part = "https://shakthi.github.io/PartUniverse/";
 
     let maping = [
        
         {
             position: { x: 0, z: 0 },
             description: "Grass ground with single texture",
-            url: "https://threeuniverse.org/src/universe_parts/grassGround.js",
+            url: "https://shakthi.github.io/PartUniverse/src/universe_parts/grassGround.js",
             credits: "https://threejs.org/examples/#webgl_animation_cloth",
             radius:14142.13562373095
         },
@@ -15,7 +15,7 @@ defineThreeUniverse(function () {
         {
             position: { x: 0, z: 0 },
             credits: "https://www.turbosquid.com/",
-            url: "https://threeuniverse.org/src/universe_parts/lonetree.js",
+            url: "https://shakthi.github.io/PartUniverse/src/universe_parts/lonetree.js",
         },
         {
             position: { x: 100, z: 100 },
