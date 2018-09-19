@@ -1,12 +1,14 @@
 import * as THREE from 'three';
-import OBJLoader2 from './extern/OBJLoader2'
 import seedrandom from 'seedrandom'
 import QueryTextureWrapper from './utils/QueryTextureWrapper'
 import TextureLoader from './utils/TextureLoader'
 import { loadnExecute } from './partLoader';
+import {MTLLoader, OBJLoader} from 'three-obj-mtl-loader'
+import path from 'path'
 
 
-export let THREEEX = Object.assign({}, THREE, { OBJLoader2 });
+
+export let THREEEX = Object.assign({}, THREE,MTLLoader, OBJLoader);
 
 import  {  GroundManager, GetGroundHitPoint } from './utils/GroundRayCaster'
 
@@ -20,19 +22,21 @@ function castShadow(object){
 }
 
 function loadMTLNObject(baseUrl, mtl, obj) {
-    var objLoader = new THREEEX.OBJLoader2();
-    objLoader.setLogging(false, false);
-
+    
+    var objLoader = new THREEEX.OBJLoader();
+    var mtlLoader = new THREEEX.MTLLoader()
 
     return new Promise((resolve, reject) => {
-        objLoader.loadMtl(baseUrl + mtl, null, function (materials) {
+        
+        mtlLoader.setTexturePath(baseUrl+path.dirname(mtl)+"/");
+        mtlLoader.load(mtl,  function (materials) {
 
             objLoader.setMaterials(materials);
-            objLoader.load(baseUrl + obj, (event) => {
-                resolve(event.detail.loaderRootNode);
-            }, null, reject, null, false);
+            objLoader.load(baseUrl + obj, (objnode) => {
+                resolve(objnode);
+            }, null, reject);
 
-        });
+        },null,reject);
     });
 
 }
