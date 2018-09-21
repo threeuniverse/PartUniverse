@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {GroundRaycast} from './utils/GroundRayCaster';
+import { GroundRaycast } from './utils/GroundRayCaster';
 
 const PointerLockControls = require('three-pointerlock');
 
@@ -7,7 +7,6 @@ var moveForward = false;
 var moveBackward = false;
 var moveLeft = false;
 var moveRight = false;
-var canJump = false;
 var nitroBoost = false;
 
 var prevTime = performance.now();
@@ -15,16 +14,24 @@ var velocity = new THREE.Vector3();
 var direction = new THREE.Vector3();
 
 
+let isPrevPositionUpdated = false;
+let prevPosition = new THREE.Vector3();
+let prevRocation = new THREE.Vector3();
+let oldHieght = 0;
+
 var controls;
 export function enabled() {
     return controls.enabled;
 }
 
+
 export function init(camera, position) {
+
 
     controls = new PointerLockControls(camera);
     controls.getObject().translateX(position.x);
     controls.getObject().translateZ(position.z);
+    controls.getObject().position.y = oldHieght= position.y;
     var onKeyDown = function (event) {
 
 
@@ -57,8 +64,7 @@ export function init(camera, position) {
                 break;
 
             case 32: // space
-                if (canJump === true) velocity.y += 350;
-                canJump = false;
+                nitroBoost = true;
                 break;
 
         }
@@ -96,6 +102,7 @@ export function init(camera, position) {
             case 86: // v
             case 78: // v
             case 77: // v
+            case 32: // v
                 nitroBoost = false; break;
         }
 
@@ -108,10 +115,6 @@ export function init(camera, position) {
 
 }
 
-
-let prevPosition = new THREE.Vector3();
-let prevRocation = new THREE.Vector3();
-let oldHieght = 0;
 
 export function update(onObject) {
 
@@ -155,10 +158,11 @@ export function update(onObject) {
     let isUpdate = false;
     let distace = prevPosition.distanceTo(controls.getObject().position);
     let distace2d = Math.sqrt(
-        (prevPosition.x -controls.getObject().position.x)*(prevPosition.x -controls.getObject().position.x)
-        +(prevPosition.z -controls.getObject().position.z)*(prevPosition.z -controls.getObject().position.z));
+        (prevPosition.x - controls.getObject().position.x) * (prevPosition.x - controls.getObject().position.x)
+        + (prevPosition.z - controls.getObject().position.z) * (prevPosition.z - controls.getObject().position.z));
 
-
+    if (!isPrevPositionUpdated)
+        distace = distace2d = 0;
 
     let rotation = new THREE.Vector3().subVectors(new THREE.Vector3(controls.getObject().rotation.x,
         controls.getObject().rotation.y,
@@ -174,26 +178,21 @@ export function update(onObject) {
         isUpdate = true;
     }
 
-
+    isPrevPositionUpdated = true;
     prevPosition = controls.getObject().position.clone();
     prevRocation = controls.getObject().rotation.clone();
 
     if (isUpdate) {
 
         var intersectObject = GroundRaycast(new THREE.Vector3().addVectors(controls.getObject().position,
-        new THREE.Vector3(0,300,0)));
-    
+            new THREE.Vector3(0, 300, 0)));
+
         if (intersectObject.length) {
-            
-            if (oldHieght) {
-                oldHieght =  ( intersectObject[0].point.y-oldHieght ) * distace2d*0.05+oldHieght ;   
-            }else{
-                oldHieght = intersectObject[0].point.y;
-            }
-             
-            controls.getObject().position.y = oldHieght;    
-        
-            
+
+            oldHieght = (intersectObject[0].point.y - oldHieght) * (distace2d > 20 ? 20 : distace2d) * 0.025 + oldHieght;
+
+            controls.getObject().position.y = oldHieght;
+
 
         }
     }
