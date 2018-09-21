@@ -56,6 +56,7 @@ defineThreeUniverse(function (THREE,UNIVERSE, options) {
 
 
     mesh = new THREE.Mesh(geometry3, material);
+    mesh.castShadow =true;
     wireframe = new THREE.Mesh(geometry3, wireframeMaterial);
     mesh.add(wireframe);
     mesh.scale.set(0.25, 0.25, 0.25);
@@ -68,6 +69,7 @@ defineThreeUniverse(function (THREE,UNIVERSE, options) {
     if (options.requestAnimationFrame) {
         options.requestAnimationFrame(function () {
             mesh.position.y = Math.sin(clock.getElapsedTime()) * 100 + 100;
+            mesh.rotation.y=mesh.position.y*0.10;
             if (mesh.position.y < 50 && spawnParticle) {
                 spawnParticle();
             }
